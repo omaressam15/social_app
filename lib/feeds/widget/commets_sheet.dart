@@ -20,6 +20,7 @@ class CommentsSheet extends StatelessWidget {
 
         listener: (context, states){},
         builder: (context,states) {
+
           var  cubitComments = CubitHome.get(context);
           return DraggableScrollableSheet(
             expand: false,
