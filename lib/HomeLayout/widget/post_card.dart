@@ -252,7 +252,7 @@ class PostCard extends StatelessWidget {
                           Expanded(
                             child:InkWell(
                               onTap: () {
-                              //  CubitHome.get(context).getCommentsOfPost(postID:CubitHome.get(context).postId[index] );
+                              CubitHome.get(context).getComments(postID: CubitHome.get(context).postId[index]);
                                 showModalBottomSheet(
                                     context: context,
                                     shape: const RoundedRectangleBorder(
@@ -262,8 +262,7 @@ class PostCard extends StatelessWidget {
                                       )
                                     ),
                                     isScrollControlled: true,
-                                    builder: (context) => CommentsSheet(postId:CubitHome.get(context).postId[index]
-                                      ,index: index,),
+                                    builder: (context) => CommentsSheet(index: index,),
                                 );
                                //
                                 if (kDebugMode) {

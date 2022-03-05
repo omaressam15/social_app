@@ -67,6 +67,9 @@ class LoadingGetPost extends StatesHome{}
 
 class GetPostSuccess extends StatesHome{}
 
+class GetUserDataSuccess extends StatesHome{}
+class GetUserDataError extends StatesHome{}
+
 class ErrorGetPost extends StatesHome{
   final String error;
 

@@ -166,6 +166,7 @@ class CubitHome extends Cubit<StatesHome>{
     });
 
   }
+
   createPostOnly({
     @required String textPost,
     @required String datetime,
@@ -186,7 +187,6 @@ class CubitHome extends Cubit<StatesHome>{
     firestore.collection('posts')
         .add(postData.toFireBase())
         .then((value) {
-          getPostsData();
       showToast(
         text: 'Your post has been shared',
         state: ToastStates.SUCCESS,
@@ -300,57 +300,46 @@ class CubitHome extends Cubit<StatesHome>{
     });
 
   }
-  
-  List <PostData> postData = [];
-  List <String> postId = [];
-  List <int> getLike=[];
-  List <int> getNumberComments = [];
 
+  List<UserData> userDataList = [];
+  void getListOfUsers(){
 
-  void getPostsData(){
-    emit(GetPostSuccess());
+    emit(GetUserDataSuccess());
 
-    firestore.collection('posts').get()
+    firestore.collection('users')
+        .get()
         .then((value){
-      for (var element in value.docs) {
 
-        element.reference.collection('comments').get().then((value) {
+      for(var userData in value.docs){
+        print(userData.id);
+        print(value.docs.length);
 
-          emit(GetCommentPostSusses());
-
-          // print(element.id);
-          getNumberComments.add(value.docs.length);
-
-
-          print(element.id);
-
-
-        }).catchError((onError){
-
-        });
-
-        element.reference.collection('likes')
-            .get()
-            .then((value) {
-          emit(GetPostSuccess());
-          getLike.add(value.docs.length);
-         // print('post id+${element.id}');
-          postId.add(element.id);
-
-          postData.add(PostData.fromFireBase(element.data()));
-
-        }).catchError((onError) {});
+        userDataList.add(UserData.fromJson(userData.data()));
       }
 
-      emit(GetPostSuccess());
-
     }).catchError((onError){
-      emit(ErrorGetPost(onError.toString()));
+      emit(GetUserDataError());
+
     });
-    
+
+
   }
 
 
+
+  createLike(String postId){
+    firestore.collection('posts')
+        .doc(postId)
+        .collection('likes')
+        .doc(userData.uId)
+        .set({'like': true})
+        .then((value){
+      emit(CreateLikePostSusses());
+    })
+        .catchError((onError){
+      emit(CreateLikePostError());
+    });
+  }
 
   createComments({
     @required String postId,
@@ -380,52 +369,73 @@ class CubitHome extends Cubit<StatesHome>{
   }
 
 
-  List <CommentModel> commentData = [];
+  List <CommentModel> commentData;
 
-  getCommentsOfPost({postID}){
-    emit(GetCommentPostSusses());
+  void getComments({String postID}){
+    commentData = [];
+
+    firestore.collection('posts').doc(postID).collection('comments').get()
+        .then((value){
+      emit(GetCommentPostSusses());
+
+      for(var dataInDoc in value.docs){
+        print(dataInDoc.id);
+        print(value.docs.length);
+
+        commentData.add(CommentModel.fromFireBase(dataInDoc.data()));
+      }
+
+    }).catchError((onError){
+      emit(GetCommentPostError());
+
+    });
+
+  }
+
+  List <PostData> postData = [];
+  List <String> postId = [];
+  List <int> getLike=[];
+  List <int> getNumberComments = [];
+
+
+  void getPostsData(){
 
     firestore.collection('posts').get()
-        .then((value) {
+        .then((value){
       for (var element in value.docs) {
 
-        element.reference.collection('comments').get()
+        element.reference.collection('comments')
+            .get()
             .then((value) {
-          emit(GetCommentPostSusses());
+          getNumberComments.add(value.docs.length);
 
 
-              print(value.docs.length);
+        }).catchError((onError){
 
-          for(var dataInDoc in value.docs){
-
-            postId.add(dataInDoc.id);
-
-
-            commentData.add(CommentModel.fromFireBase(dataInDoc.data()));
-              }
-        })
-            .catchError((onError) {
-          emit(GetCommentPostError());
         });
+
+        element.reference.collection('likes')
+            .get()
+            .then((value) {
+          emit(GetPostSuccess());
+          getLike.add(value.docs.length);
+          postId.add(element.id);
+          print("post id $postId");
+          postData.add(PostData.fromFireBase(element.data()));
+
+        }).catchError((onError) {});
       }
+
+      emit(GetPostSuccess());
+
+    }).catchError((onError){
+      emit(ErrorGetPost(onError.toString()));
     });
+
   }
 
 
 
-  createLike(String postId){
-    firestore.collection('posts')
-        .doc(postId)
-        .collection('likes')
-        .doc(userData.uId)
-        .set({'like': true})
-        .then((value){
-          emit(CreateLikePostSusses());
-    })
-        .catchError((onError){
-          emit(CreateLikePostError());
-    });
-  }
 
 
   updateUserData({

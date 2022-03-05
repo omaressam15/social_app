@@ -6,11 +6,11 @@ import 'package:social_app/HomeLayout/widget/comment_card.dart';
 import 'package:social_app/styles/icon_broken.dart';
 class CommentsSheet extends StatelessWidget {
 
-  final postId ;
 
   final int index;
 
-   const CommentsSheet({Key key,this.postId,this.index}) : super(key: key);
+
+   const CommentsSheet({Key key,this.index}) : super(key: key);
 
 
   @override

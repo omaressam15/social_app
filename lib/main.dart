@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
 
-      create: (context)=> CubitHome()..getUserData()..getPostsData()..getCommentsOfPost(),
+      create: (context)=> CubitHome()..getUserData()..getPostsData()..getListOfUsers(),
 
       child: BlocConsumer <CubitHome,StatesHome>(
 

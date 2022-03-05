@@ -366,7 +366,7 @@ Widget buildListViewProductItem (product,context,{isOldPrice = true,bool fav = t
 */
 
  Widget myDivider()=>Padding(
-   padding: const EdgeInsets.all(10),
+   padding: const EdgeInsets.symmetric(horizontal:15 ),
    child: Container(
      width: double.infinity,
      color: Colors.grey,
