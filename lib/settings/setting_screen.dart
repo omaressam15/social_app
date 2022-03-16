@@ -16,7 +16,7 @@ class SettingScreen extends StatelessWidget {
       listener:(state,context){} ,
       builder:(context,stata){
 
-        var userModel = CubitHome.get(context).userData;
+        var userModel = CubitHome.get(context).userDataModel;
 
         return Padding(
           padding: const EdgeInsets.all(8.0),

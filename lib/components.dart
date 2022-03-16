@@ -365,14 +365,16 @@ Widget buildListViewProductItem (product,context,{isOldPrice = true,bool fav = t
  );
 */
 
- Widget myDivider()=>Padding(
-   padding: const EdgeInsets.symmetric(horizontal:15 ),
-   child: Container(
-     width: double.infinity,
-     color: Colors.grey,
-     height: 0.5,
-   ),
- );
+Widget myDivider() => Padding(
+  padding: const EdgeInsetsDirectional.only(
+    start: 20.0,
+  ),
+  child: Container(
+    width: double.infinity,
+    height: 1.0,
+    color: Colors.grey[300],
+  ),
+);
 
 /*
  Widget articalBulider(list)=> ConditionalBuilder(

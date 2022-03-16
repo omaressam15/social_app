@@ -30,6 +30,11 @@ class UploadCoverImageError extends StatesHome{}
 class UploadPostImageSuccess extends StatesHome{}
 
 class CreatePostsSusses extends StatesHome{}
+class LoadingUpdateDeviceToken extends StatesHome{}
+class LoadingUpdateDeviceTokenError extends StatesHome{}
+
+class SendNotificationSuccess extends StatesHome{}
+class SendNotificationError extends StatesHome{}
 
 class CreatePostsError extends StatesHome{}
 
@@ -66,9 +71,19 @@ class LoadingUpdateCoverImage extends StatesHome{}
 class LoadingGetPost extends StatesHome{}
 
 class GetPostSuccess extends StatesHome{}
+class GetCommentsSuccess extends StatesHome{}
+class GetPostError extends StatesHome{}
 
 class GetUserDataSuccess extends StatesHome{}
+class LoadingGetUserDataSuccess extends StatesHome{}
 class GetUserDataError extends StatesHome{}
+
+class GetChattingMessagingSuccess extends StatesHome{}
+class GetChattingMessagingError extends StatesHome{}
+
+class SendChattingMessagingSuccess extends StatesHome{}
+class SendChattingMessagingError extends StatesHome{}
+
 
 class ErrorGetPost extends StatesHome{
   final String error;

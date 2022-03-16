@@ -1,3 +1,4 @@
+import 'package:conditional_builder/conditional_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/HomeLayout/cubit/home_cubit.dart';
@@ -10,22 +11,25 @@ class CommentsSheet extends StatelessWidget {
   final int index;
 
 
-   const CommentsSheet({Key key,this.index}) : super(key: key);
+  const CommentsSheet({Key key,this.index}) : super(key: key);
 
 
   @override
   Widget build(BuildContext context) {
-    var  commentForm = TextEditingController();
     return BlocConsumer<CubitHome,StatesHome>(
 
         listener: (context, states){},
         builder: (context,states) {
+          var  commentForm = TextEditingController();
 
           var  cubitComments = CubitHome.get(context);
           return DraggableScrollableSheet(
             expand: false,
-            builder: ( context, ScrollController scrollController) => Column(
-              children: [
+            builder: ( _, scrollController) {
+              return Column(
+              children: <Widget>[
+                
+
                 Padding(
                   padding:  const EdgeInsets.all(15.0),
                   child: Container(
@@ -38,18 +42,39 @@ class CommentsSheet extends StatelessWidget {
                     ),
                   ),
                 ),
-                 Expanded(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemBuilder: (BuildContext context, int index) => CommentCard(
 
-                        commentModel:cubitComments.commentData[index] ,
+                Expanded(
+                    child: ConditionalBuilder(
+                      condition: cubitComments.commentData.isNotEmpty,
+                      fallback:(context)=> Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children:  const [
+                            Icon(Icons.comment_outlined,color: Colors.grey,size: 90,),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Text('No comment yet',style: TextStyle(color: Colors.grey,fontSize: 23,fontWeight: FontWeight.bold),)
+                          ],
+                        ),
                       ),
-                      itemCount: cubitComments.commentData.length,
+                      builder: (context) => ListView.builder(
+              controller: scrollController,
+              physics: const BouncingScrollPhysics(),
+
+              itemBuilder: (BuildContext context, int index) => CommentCard(
+
+              commentModel:cubitComments.commentData[index],
+              ),
+              itemCount: cubitComments.commentData.length,
 
 
 
-                    )),
+              ),
+
+                    )
+                ),
+
                 Padding(
                   padding: MediaQuery.of(context).viewInsets,
                   child: Padding(
@@ -113,10 +138,11 @@ class CommentsSheet extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
+            );
+            },
             maxChildSize: 0.9,
+            minChildSize: 0.75,
             initialChildSize: 0.9,
-            minChildSize: 0.9,
           );
         }
     );

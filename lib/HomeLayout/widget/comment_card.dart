@@ -5,9 +5,7 @@ class CommentCard extends StatelessWidget {
 
   final CommentModel commentModel;
 
-  final id;
-
-  const CommentCard({Key key,this.commentModel,this.id}) : super(key: key);
+  const CommentCard({Key key,this.commentModel}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,29 +21,27 @@ class CommentCard extends StatelessWidget {
             backgroundImage: NetworkImage(commentModel.image),
           ),
           const SizedBox(width: 10,),
-          Flexible(
-            child: Container(
-              width: MediaQuery.of(context).size.width*0.4,
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children:  [
-                    Text(commentModel.userName,
-                      style: const TextStyle(fontSize:17,color: Colors.black,fontWeight: FontWeight.bold),
-                    ),
-                    Text(commentModel.textComment,
-                      overflow: TextOverflow.visible,style: const TextStyle(
-                        color: Colors.black,
-                    ),)
-                  ],
-                ),
+          Container(
+            width: MediaQuery.of(context).size.width*0.4,
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children:  [
+                  Text(commentModel.userName,
+                    style: const TextStyle(fontSize:17,color: Colors.black,fontWeight: FontWeight.bold),
+                  ),
+                  Text(commentModel.textComment,
+                    overflow: TextOverflow.visible,style: const TextStyle(
+                      color: Colors.black,
+                  ),)
+                ],
               ),
-              decoration: const BoxDecoration(
-                color: Color(0xfff1f2f6),
-                borderRadius: BorderRadius.all(Radius.circular(15))
+            ),
+            decoration: const BoxDecoration(
+              color: Color(0xfff1f2f6),
+              borderRadius: BorderRadius.all(Radius.circular(15))
 
-              ),
             ),
           )
         ],

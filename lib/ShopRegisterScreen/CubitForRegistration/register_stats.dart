@@ -16,7 +16,12 @@ class SocialRegistrationErrorState extends SocialRegistrationStates
 
 class SocialCreateUserLoadingState extends SocialRegistrationStates {}
 
-class SocialCreateUserSuccessState extends SocialRegistrationStates {}
+class SocialCreateUserSuccessState extends SocialRegistrationStates {
+  final String uid;
+
+  SocialCreateUserSuccessState(this.uid);
+
+}
 
 class SocialCreateUserErrorState extends SocialRegistrationStates
 {
@@ -26,3 +31,7 @@ class SocialCreateUserErrorState extends SocialRegistrationStates
 }
 
 class SocialChangePasswordVisibilityState extends SocialRegistrationStates {}
+class GetUsersData extends SocialRegistrationStates{}
+class LoadingUsersData extends SocialRegistrationStates{}
+class GetUsersDataError extends SocialRegistrationStates{}
+

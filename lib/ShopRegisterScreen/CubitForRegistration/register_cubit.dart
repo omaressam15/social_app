@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/Models/user_data_model.dart';
 import 'package:social_app/ShopRegisterScreen/CubitForRegistration/register_stats.dart';
+import 'package:social_app/constants.dart';
 
 class SocialRegistrationCubit extends Cubit<SocialRegistrationStates>{
   SocialRegistrationCubit() : super(SocialRegistrationInitialState());
@@ -18,6 +19,9 @@ class SocialRegistrationCubit extends Cubit<SocialRegistrationStates>{
  IconData suffix = Icons.visibility_outlined;
 
  FirebaseFirestore fireStore = FirebaseFirestore.instance;
+
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  UserData userDataModel ;
 
 
  void changePasswordVisibility(){
@@ -51,6 +55,8 @@ class SocialRegistrationCubit extends Cubit<SocialRegistrationStates>{
           uId: value.user.uid
       );
 
+      getUserData();
+
       if (kDebugMode) {
         print(value.user.email);
       }
@@ -76,18 +82,19 @@ class SocialRegistrationCubit extends Cubit<SocialRegistrationStates>{
     UserData userData = UserData(
       email: email,
       name: name,
+      tokenDevice: tokenDevices,
       phone: phone,
       uId: uId,
-      bio: 'hi i am omar',
-      image: 'https://image.freepik.com/free-photo/beauty-fashion-concept-carefree-beautiful-girl-with-curly-hair-naked-shoulders-smiling_176420-20176.jpg',
-      cover: 'https://image.freepik.com/free-photo/beauty-fashion-concept-carefree-beautiful-girl-with-curly-hair-naked-shoulders-smiling_176420-20176.jpg'
+      bio: 'Write your bio',
+      image: 'https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg',
+      cover: 'http://iconerecife.com.br/wp-content/plugins/uix-page-builder/uixpb_templates/images/UixPageBuilderTmpl/default-cover-4.jpg'
     );
 
     fireStore.collection('users').doc(uId)
         .set(userData.toJson())
         .then((value) {
 
-      emit(SocialCreateUserSuccessState());
+      emit(SocialCreateUserSuccessState(uId));
 
     }).catchError((onError){
 
@@ -96,6 +103,26 @@ class SocialRegistrationCubit extends Cubit<SocialRegistrationStates>{
       }
       emit(SocialCreateUserErrorState(onError.toString()));
     });
+  }
+
+  void getUserData (){
+
+    emit(LoadingUsersData());
+
+    firestore.collection('users').doc(uId).get()
+        .then((value) {
+
+      userDataModel = UserData.fromJson(value.data());
+
+      emit(GetUsersData());
+    })
+        .catchError((onError){
+      emit(GetUsersDataError());
+      if (kDebugMode) {
+        print(onError);
+      }
+    });
+
   }
 
 }

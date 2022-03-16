@@ -12,26 +12,33 @@ class ChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<CubitHome, StatesHome>(
-      listener: (BuildContext context, state) {},
-      builder: (BuildContext context, state) {
+    return Builder(
+      builder: (BuildContext context) {
 
-        var usersList = CubitHome.get(context).userDataList;
+        return  BlocConsumer<CubitHome, StatesHome>(
+          listener: (BuildContext context, state) {},
+          builder: (BuildContext context, state) {
 
-        return ConditionalBuilder(
-          condition: usersList.isNotEmpty,
-          fallback:(context)=> const Center(child: CircularProgressIndicator()),
-          builder: (BuildContext context) {
-            return ListView.separated(
-              primary: true,
-              shrinkWrap: true,
-              physics: const BouncingScrollPhysics(),
-              separatorBuilder: (BuildContext context, int index) => myDivider(),
-              itemBuilder: (context, index) => ItemUserDataBuilder(
-                  profileImage: usersList[index].image,
-                  name: usersList[index].name,
-                ),
-              itemCount: usersList.length,
+            var usersList = CubitHome.get(context).userDataList;
+
+            return ConditionalBuilder(
+              condition: usersList.isNotEmpty,
+              fallback:(context)=> const Center(child: CircularProgressIndicator()),
+              builder: (BuildContext context) {
+                return ListView.separated(
+                  primary: true,
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  separatorBuilder: (BuildContext context, int index) => myDivider(),
+                  itemBuilder: (context, index) => ItemUserDataBuilder(
+                    profileImage: usersList[index].image,
+                    tokenDevice: usersList[index].tokenDevice,
+                    userId: usersList[index].uId,
+                    name: usersList[index].name,
+                  ),
+                  itemCount: usersList.length,
+                );
+              },
             );
           },
         );

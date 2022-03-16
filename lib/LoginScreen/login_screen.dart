@@ -8,6 +8,8 @@ import 'package:social_app/LoginScreen/Cubit/stats_login.dart';
 import 'package:social_app/ShopRegisterScreen/shop_register_screen.dart';
 import 'package:social_app/components.dart';
 
+import '../constants.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key key}) : super(key: key);
 
@@ -34,13 +36,18 @@ class _LoginScreenState extends State<LoginScreen> {
               state: ToastStates.ERROR,
             );
 
-          }if(state is SocialLoginSuccessState){
+          }
+          if(state is SocialLoginSuccessState){
 
-            
+            uId = state.uid;
             CacheHelper.saveData(key:'uId', value: state.uid)
                 .then((value) => navigateNoBack(const HomeLayout(),context));
+
+
             
           }
+
+
         },
         builder: (context, state) {
           return Scaffold(

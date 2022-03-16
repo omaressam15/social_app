@@ -20,7 +20,7 @@ class EditProfile extends StatelessWidget {
         listener: (state,context){},
         builder: (context,state){
 
-      var userModel = CubitHome.get(context).userData;
+      var userModel = CubitHome.get(context).userDataModel;
       var profileImage = CubitHome.get(context).profileImage;
       var coverImage = CubitHome.get(context).coverImage;
 
@@ -38,7 +38,7 @@ class EditProfile extends StatelessWidget {
                     CubitHome.get(context).updateUserData(
                         name: nameController.text,
                         bio: bioController.text,
-                        phone: phoneController.text
+                        phone: phoneController.text,
                     );
 
                   },
@@ -70,7 +70,7 @@ class EditProfile extends StatelessWidget {
                           children: [
                             Container(
                               width: double.infinity,
-                              height: 150,
+                              height: 165,
                               decoration:  BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
                                   image: DecorationImage(

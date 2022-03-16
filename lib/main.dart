@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +9,10 @@ import 'package:social_app/HomeLayout/home_layout.dart';
 import 'package:social_app/LoginScreen/login_screen.dart';
 import 'BlocObserver/bloc_observer.dart';
 import 'CacheHelper.dart/cache_helper.dart';
+import 'components.dart';
 import 'constants.dart';
+import 'dioHelper/dio_network.dart';
+import 'notification/firebaseMessagingBackground.dart';
 import 'styles/themes.dart';
 
 void main() async {
@@ -16,15 +20,42 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp();
+  DioHelper.inti();
+  tokenDevices = await FirebaseMessaging.instance.getToken();
+
+  if (kDebugMode) {
+    print('token Device is $tokenDevices');
+  }
+
+
+  // foreground fcm
+  FirebaseMessaging.onMessage.listen((event)
+  {
+    print('on message');
+    print(event.data.toString());
+
+    showToast(text: 'on message', state: ToastStates.SUCCESS,);
+  });
+
+  // when click on notification to open app
+  FirebaseMessaging.onMessageOpenedApp.listen((event)
+  {
+    print('on message opened app');
+    print(event.data.toString());
+    showToast(text: 'on message opened app', state: ToastStates.SUCCESS,);
+  });
+
+  // background fcm
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
   Bloc.observer = MyBlocObserver();
 
   await CacheHelper.init();
 
-
+  uId = CacheHelper.getData(key:'uId');
   Widget widgets;
 
-  uId = CacheHelper.getData(key:'uId');
+
 
   if (kDebugMode) {
     print('My Id is $uId');
@@ -49,7 +80,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
 
-      create: (context)=> CubitHome()..getUserData()..getPostsData()..getListOfUsers(),
+      create: (context)=> CubitHome()..getPostsData(),
 
       child: BlocConsumer <CubitHome,StatesHome>(
 

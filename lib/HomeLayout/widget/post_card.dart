@@ -191,7 +191,7 @@ class PostCard extends StatelessWidget {
                                       ),
                                       const SizedBox(width: 10,),
                                       Text(
-                                        '${CubitHome.get(context).getLike[index]}',
+                                        '${CubitHome.get(context).likesNumber[CubitHome.get(context).postId[index]]}',
                                         style: TextStyle(
                                             color: Colors.grey[600]
                                         ),
@@ -216,7 +216,7 @@ class PostCard extends StatelessWidget {
                                     children: [
 
                                       Text(
-                                        '${CubitHome.get(context).getNumberComments[index]}',
+                                        '${CubitHome.get(context).commentsNumber[CubitHome.get(context).postId[index]]}',
                                         style: TextStyle(
                                             color: Colors.grey[600]
                                         ),
@@ -254,6 +254,7 @@ class PostCard extends StatelessWidget {
                               onTap: () {
                               CubitHome.get(context).getComments(postID: CubitHome.get(context).postId[index]);
                                 showModalBottomSheet(
+
                                     context: context,
                                     shape: const RoundedRectangleBorder(
                                       borderRadius: BorderRadius.only(
@@ -261,8 +262,10 @@ class PostCard extends StatelessWidget {
                                         topLeft: Radius.circular(15),
                                       )
                                     ),
+
                                     isScrollControlled: true,
-                                    builder: (context) => CommentsSheet(index: index,),
+                                    elevation: 5,
+                                    builder: (_) => CommentsSheet(index: index,),
                                 );
                                //
                                 if (kDebugMode) {
@@ -274,7 +277,7 @@ class PostCard extends StatelessWidget {
                                   CircleAvatar(
                                     radius: 17,
                                     backgroundImage: NetworkImage(
-                                      CubitHome.get(context).userData.image,
+                                      CubitHome.get(context).userDataModel.image,
 
                                     ),
                                   ),
@@ -319,8 +322,6 @@ class PostCard extends StatelessWidget {
                         ],
                       ),
                     ),
-
-
 
                   ],
                 ),

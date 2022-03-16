@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/HomeLayout/home_layout.dart';
 import 'package:social_app/ShopRegisterScreen/CubitForRegistration/register_cubit.dart';
 import 'package:social_app/components.dart';
+import '../CacheHelper.dart/cache_helper.dart';
+import '../constants.dart';
 import 'CubitForRegistration/register_stats.dart';
 
 class SocialRegisterScreen extends StatelessWidget {
@@ -27,13 +29,10 @@ class SocialRegisterScreen extends StatelessWidget {
       child: BlocConsumer<SocialRegistrationCubit,SocialRegistrationStates>(
         listener: (context,state){
 
-          if(state is SocialRegistrationSuccessState){
-
-            navigateNoBack(
-              const HomeLayout(),
-              context,
-
-            );
+          if(state is SocialCreateUserSuccessState){
+            uId = state.uid;
+            CacheHelper.saveData(key:'uId', value: state.uid)
+                .then((value) => navigateNoBack(const HomeLayout(),context));
           }
         },
         builder: (context,state){

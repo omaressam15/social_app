@@ -21,7 +21,7 @@ class AddNewPost extends StatelessWidget {
 
         builder: (context,state) {
 
-          var userData = CubitHome.get(context).userData;
+          var userData = CubitHome.get(context).userDataModel;
           var postImage = CubitHome.get(context).postImage;
           var lunchPost = CubitHome.get(context);
 

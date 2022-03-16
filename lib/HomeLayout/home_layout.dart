@@ -6,6 +6,10 @@ import 'package:social_app/HomeLayout/cubit/home_state.dart';
 import 'package:social_app/components.dart';
 import 'package:social_app/styles/icon_broken.dart';
 
+import '../CacheHelper.dart/cache_helper.dart';
+import '../LoginScreen/Cubit/stats_login.dart';
+import '../constants.dart';
+
 class HomeLayout extends StatelessWidget {
 
   const HomeLayout({Key key}) : super(key: key);
@@ -22,7 +26,6 @@ class HomeLayout extends StatelessWidget {
             navigate( AddNewPost(), context);
 
           }
-
         },
 
         builder: (context,states){

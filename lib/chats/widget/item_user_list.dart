@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:social_app/components.dart';
+import '../../ChatDetailsScreen/chat_details_screen.dart';
 
 class ItemUserDataBuilder  extends StatelessWidget {
 
@@ -6,14 +8,22 @@ class ItemUserDataBuilder  extends StatelessWidget {
 
  final String name;
 
+ final String userId;
 
-  const ItemUserDataBuilder ({Key key,this.profileImage,this.name}) : super(key: key);
+ final String tokenDevice;
+
+  const ItemUserDataBuilder ({Key key,this.tokenDevice,this.profileImage,this.name, this.userId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-
+        navigate(ChatDetailsScreen(
+            userName: name,
+            userImage: profileImage,
+            tokenDevice: tokenDevice,
+            receiverId: userId),
+            context);
       },
       child: Padding(
         padding: const EdgeInsets.all(18),
@@ -30,22 +40,7 @@ class ItemUserDataBuilder  extends StatelessWidget {
 
             const SizedBox(width: 15,),
 
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children:  [
-
-                  Row(
-                    children:  [
-                      Text(name,style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 17),),
-                      const SizedBox(width: 5,),
-                      const Icon(Icons.check_circle,color: Colors.blue,size: 17,)
-                    ],
-                  ),
-
-                ],
-              ),
-            ),
+            Text(name,style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 17),),
 
           ],
         ),

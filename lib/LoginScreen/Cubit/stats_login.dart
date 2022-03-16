@@ -6,6 +6,11 @@ class SocialLoginInitialState extends SocialLoginStates{}
 class SocialLoginLoadingState extends SocialLoginStates {}
 
 class ChangeVisibility extends SocialLoginStates{}
+class LoadingUpdateDeviceTokenError extends SocialLoginStates{}
+
+class GetUsersData extends SocialLoginStates{}
+class LoadingUsersData extends SocialLoginStates{}
+class GetUsersDataError extends SocialLoginStates{}
 
 class SocialLoginSuccessState extends SocialLoginStates {
 

@@ -12,38 +12,54 @@ class FeedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return BlocConsumer<CubitHome,StatesHome>(
-        listener: (context,stats){},
-        builder: (context,stats){
+    return Builder(
+      builder: (context) {
+        CubitHome.get(context).getUserData();
+        return BlocConsumer<CubitHome,StatesHome>(
+            listener: (context,stats){},
+            builder: (context,stats){
 
-         var postModel =  CubitHome.get(context);
+              var postModel =  CubitHome.get(context);
 
-          return  ConditionalBuilder(
-            condition:postModel.postData.isNotEmpty && postModel.userData!=null,
-            builder: (context)=>SingleChildScrollView(
-              primary: true,
+              return SingleChildScrollView(
+                primary: true,
 
-              child: Column(
+                child: Column(
 
-                children:  [
+                  children:  [
 
-                  const IntroCard(),
+                    const IntroCard(),
 
-                  const SizedBox(height: 12,),
+                    const SizedBox(height: 12,),
 
-                  ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context,index)=> PostCard(postData: postModel.postData[index],index: index,),
+                    ConditionalBuilder(
+                      condition:postModel.postData.isNotEmpty && postModel.userDataModel!=null,
+                      builder: (context)=>ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context,index)=> PostCard(postData: postModel.postData[index],index: index,),
 
-                      itemCount: CubitHome.get(context).postData.length
-                  ),
+                          itemCount: CubitHome.get(context).postData.length
+                      ),
+                      fallback: (context)=>Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children:  const [
+                            Icon(Icons.chat,color: Colors.grey,size: 90,),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Text('No posts yet',style: TextStyle(color: Colors.grey,fontSize: 23,fontWeight: FontWeight.bold),)
+                          ],
+                        ),
+                      ),
+                    ),
 
-                ],
-              ),
-            ),
-            fallback:(context)=> const Center(child: CircularProgressIndicator(),),
-          );
-        });
+                  ],
+                ),
+              );
+            });
+      }
+    );
   }
 }

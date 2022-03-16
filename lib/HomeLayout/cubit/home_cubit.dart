@@ -11,10 +11,14 @@ import 'package:social_app/Models/user_data_model.dart';
 import 'package:social_app/chats/chat_screen.dart';
 import 'package:social_app/components.dart';
 import 'package:social_app/constants.dart';
+import 'package:social_app/dioHelper/dio_network.dart';
 import 'package:social_app/feeds/feed_screen.dart';
 import 'package:social_app/settings/setting_screen.dart';
 import 'package:social_app/users/users_screen.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import '../../Models/chatting.dart';
+import '../../Models/notification.dart';
+import '../../dioHelper/url.dart';
 import 'home_state.dart';
 
 class CubitHome extends Cubit<StatesHome>{
@@ -25,12 +29,12 @@ class CubitHome extends Cubit<StatesHome>{
 
   int currentIndex = 0;
 
-  UserData userData ;
+  UserData userDataModel ;
 
 
   List <Widget> screens = [
 
-    FeedScreen(),
+    const FeedScreen(),
 
     const ChatScreen(),
 
@@ -53,6 +57,13 @@ class CubitHome extends Cubit<StatesHome>{
 
   void changeButtonNavigationBar(index){
 
+
+    if(index ==1){
+
+      getListOfUsers();
+      updateUserTokenDevice();
+    }
+
     if(index==2){
       emit(ScreenNewPost());
 
@@ -62,6 +73,36 @@ class CubitHome extends Cubit<StatesHome>{
     }
   }
 
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  //3ashan lama yd5ol 3ala chats y3ml update le device token
+  // 3ashan al devise token byt3'ayr lma al user y3ml logout
+  updateUserTokenDevice(){
+
+    UserData updateUserDataTokenDevice = UserData(
+      name: userDataModel.name,
+      phone: userDataModel.phone,
+      bio: userDataModel.bio,
+      image: userDataModel.image,
+      email: userDataModel.email,
+      uId: userDataModel.uId,
+      cover: userDataModel.cover,
+      tokenDevice: tokenDevices,
+
+    );
+
+
+    firestore.collection('users')
+        .doc(userDataModel.uId)
+        .update(updateUserDataTokenDevice.toJson())
+        .then((value){
+      emit(LoadingUpdateDeviceToken());
+
+    })
+        .catchError((onError){
+      emit(LoadingUpdateDeviceTokenError());
+    });
+  }
 
 
 
@@ -174,9 +215,9 @@ class CubitHome extends Cubit<StatesHome>{
   }){
     emit(LoadingCreatePost());
     PostData postData = PostData(
-        name: userData.name,
-        profileImage: userData.image,
-        uId: userData.uId,
+        name: userDataModel.name,
+        profileImage: userDataModel.image,
+        uId: userDataModel.uId,
         dateTime: datetime,
         postImage: postImage?? '',
         textPost: textPost
@@ -278,8 +319,56 @@ class CubitHome extends Cubit<StatesHome>{
 
   }
 
+void sendNotification({String title,String body,String token}){
 
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
+    SendNotification notification = SendNotification(
+      tokenNotification: token,
+      body : body,
+      title: title
+    );
+
+    DioHelper.postData(url: baseUrl,
+        data: notification.toJson())
+        .then((value) {
+          print('print data$value.data');
+          emit(SendNotificationSuccess());
+    }).catchError((onError){
+      emit(SendNotificationError());
+
+    });
+
+}
+
+  updateUserData({
+    @required String name,
+    @required String bio,
+    @required String phone,
+    String profileImage,
+    String coverImage,
+  }){
+    emit(LoadingUpdateUserData());
+    UserData updateUserData = UserData(
+        name: name,
+        phone: phone,
+        bio: bio,
+        image: profileImage ?? userDataModel.image,
+        email: userDataModel.email,
+        uId: userDataModel.uId,
+        cover:coverImage?? userDataModel.cover,
+
+    );
+
+
+    firestore.collection('users')
+        .doc(userDataModel.uId)
+        .update(updateUserData.toJson())
+        .then((value){
+
+    })
+        .catchError((onError){
+      emit(UserUpdateDataError());
+    });
+  }
 
   void getUserData (){
 
@@ -288,7 +377,7 @@ class CubitHome extends Cubit<StatesHome>{
     firestore.collection('users').doc(uId).get()
         .then((value) {
 
-         userData = UserData.fromJson(value.data());
+         userDataModel = UserData.fromJson(value.data());
 
          emit(HomeSuccessState());
     })
@@ -301,37 +390,34 @@ class CubitHome extends Cubit<StatesHome>{
 
   }
 
-  List<UserData> userDataList = [];
+  List<UserData> userDataList;
   void getListOfUsers(){
+    emit(LoadingGetUserDataSuccess());
 
-    emit(GetUserDataSuccess());
-
+    userDataList =[];
     firestore.collection('users')
-        .get()
-        .then((value){
+        .snapshots()
+        .listen((value){
+      emit(GetUserDataSuccess());
 
-      for(var userData in value.docs){
-        print(userData.id);
+      for(var usersData in value.docs){
+        print(usersData.id);
         print(value.docs.length);
+        if(usersData.data()['uId']!= userDataModel.uId) {
+          userDataList.add(UserData.fromJson(usersData.data()));
+        }
 
-        userDataList.add(UserData.fromJson(userData.data()));
       }
 
-    }).catchError((onError){
-      emit(GetUserDataError());
-
     });
-
-
   }
-
 
 
   createLike(String postId){
     firestore.collection('posts')
         .doc(postId)
         .collection('likes')
-        .doc(userData.uId)
+        .doc(userDataModel.uId)
         .set({'like': true})
         .then((value){
       emit(CreateLikePostSusses());
@@ -348,10 +434,10 @@ class CubitHome extends Cubit<StatesHome>{
 
     CommentModel commentModel = CommentModel(
 
-      image: userData.image,
-      userName: userData.name,
+      image: userDataModel.image,
+      userName: userDataModel.name,
       textComment: textComment,
-      userId: userData.uId
+      userId: userDataModel.uId
 
     );
     firestore.collection('posts')
@@ -369,46 +455,50 @@ class CubitHome extends Cubit<StatesHome>{
   }
 
 
-  List <CommentModel> commentData;
+
+
+  List <CommentModel> commentData=[];
 
   void getComments({String postID}){
-    commentData = [];
 
-    firestore.collection('posts').doc(postID).collection('comments').get()
-        .then((value){
-      emit(GetCommentPostSusses());
+    firestore.collection('posts')
+        .doc(postID)
+        .collection('comments')
+        .snapshots().
+    listen((event) {
+      commentData = [];
 
-      for(var dataInDoc in value.docs){
+      for(var dataInDoc in event.docs){
         print(dataInDoc.id);
-        print(value.docs.length);
-
+        print(event.docs.length);
         commentData.add(CommentModel.fromFireBase(dataInDoc.data()));
       }
-
-    }).catchError((onError){
-      emit(GetCommentPostError());
+      emit(GetCommentPostSusses());
 
     });
-
   }
 
   List <PostData> postData = [];
   List <String> postId = [];
-  List <int> getLike=[];
-  List <int> getNumberComments = [];
+  Map<String, int> likesNumber = {};
+  Map<String, int> commentsNumber = {};
 
 
   void getPostsData(){
 
-    firestore.collection('posts').get()
-        .then((value){
+    firestore.collection('posts')
+        .orderBy('DateTime')
+        .snapshots()
+        .listen((value){
+
+          postData =[];
       for (var element in value.docs) {
 
         element.reference.collection('comments')
             .get()
             .then((value) {
-          getNumberComments.add(value.docs.length);
-
+          commentsNumber.addAll({element.id: value.docs.length});
+          print('number comment ${commentsNumber.length}');
 
         }).catchError((onError){
 
@@ -417,54 +507,78 @@ class CubitHome extends Cubit<StatesHome>{
         element.reference.collection('likes')
             .get()
             .then((value) {
+
           emit(GetPostSuccess());
-          getLike.add(value.docs.length);
+          likesNumber.addAll({element.id:value.docs.length});
           postId.add(element.id);
           print("post id $postId");
           postData.add(PostData.fromFireBase(element.data()));
 
-        }).catchError((onError) {});
+        }).catchError((onError) {
+          emit(GetPostError());
+
+        });
       }
-
-      emit(GetPostSuccess());
-
-    }).catchError((onError){
-      emit(ErrorGetPost(onError.toString()));
-    });
-
-  }
-
-
-
-
-
-  updateUserData({
-    @required String name,
-    @required String bio,
-    @required String phone,
-    String profileImage,
-    String coverImage,
-  }){
-    emit(LoadingUpdateUserData());
-    UserData updateUserData = UserData(
-        name: name,
-        phone: phone,
-        bio: bio,
-        image: profileImage ?? userData.image,
-        email: userData.email,
-        uId: userData.uId,
-        cover:coverImage?? userData.cover
-    );
-
-
-    firestore.collection('users')
-        .doc(userData.uId)
-        .update(updateUserData.toJson())
-        .then((value){
-
-    })
-        .catchError((onError){
-      emit(UserUpdateDataError());
     });
   }
+
+
+void sendMessageChatting({
+  String textMassage,
+  String receiverID,
+  String dataTime
+}){
+
+  ChatData chatData = ChatData(
+    message:  textMassage,
+    senderId: userDataModel.uId,
+    receiverId: receiverID ,
+    dateTime: dataTime,
+  );
+
+  firestore.collection('users').
+  doc(userDataModel.uId).
+  collection('chats').
+  doc(receiverID).
+  collection('messages').
+  add(chatData.toJson()).
+  then((value) {
+    emit(SendChattingMessagingSuccess());
+  }).catchError((onError){
+    emit(SendChattingMessagingError());
+  });
+
+  firestore.collection('users').
+  doc(receiverID).
+  collection('chats').
+  doc(userDataModel.uId).
+  collection('messages').
+  add(chatData.toJson()).
+  then((value) {
+    emit(SendChattingMessagingSuccess());
+  }).catchError((onError){
+    emit(SendChattingMessagingError());
+  });
+
+}
+
+List<ChatData>listOfChats=[] ;
+void getMessageChatting({String receiverId}){
+
+    firestore.collection('users').
+    doc(userDataModel.uId).
+    collection('chats').
+    doc(receiverId).
+    collection('messages').
+    orderBy('DateTime').
+    snapshots().
+    listen((event) {
+      listOfChats= [];
+      for(var dataChats in event.docs){
+        listOfChats.add(ChatData.fromJson(dataChats.data()));
+      }
+      emit(GetChattingMessagingSuccess());
+    });
+}
+
 }
