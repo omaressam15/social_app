@@ -3,16 +3,22 @@ class ChatData{
   String senderId ;
   String receiverId ;
   String message;
-  String dateTime ;
+  String time;
+  String date;
+  String dateTime;
+  String imageChatting;
 
-  ChatData({this.senderId, this.receiverId, this.message,this.dateTime});
+  ChatData({this.dateTime,this.senderId, this.receiverId, this.message,this.time,this.date, this.imageChatting});
 
   ChatData.fromJson(Map<String,dynamic>json){
 
     senderId = json['SenderId'];
     receiverId = json['ReceiverId'];
     message = json['Message'];
-    dateTime = json['DateTime'];
+    time = json['time'];
+    date = json['date'];
+    dateTime = json['dateTime'];
+    imageChatting = json['ImageChatting'];
 
   }
 
@@ -23,7 +29,10 @@ class ChatData{
       'SenderId' : senderId,
       'ReceiverId' : receiverId,
       'Message' : message,
-      'DateTime' : dateTime,
+      'time' : time,
+      'date' : date,
+      'dateTime' : dateTime,
+      'ImageChatting' : imageChatting,
     };
 
   }

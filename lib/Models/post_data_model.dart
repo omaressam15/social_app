@@ -3,7 +3,7 @@ class PostData {
   String name;
   String profileImage;
   String postImage;
-  String dateTime;
+  var dateTime;
   String textPost;
   String uId;
 

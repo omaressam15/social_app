@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:social_app/EditProfile/edit_profile_screen.dart';
 import 'package:social_app/styles/icon_broken.dart';
 
 Widget defaultFormField({

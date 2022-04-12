@@ -3,16 +3,16 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:social_app/HomeLayout/cubit/home_cubit.dart';
-import 'package:social_app/HomeLayout/cubit/home_state.dart';
-import 'package:social_app/HomeLayout/home_layout.dart';
-import 'package:social_app/LoginScreen/login_screen.dart';
 import 'BlocObserver/bloc_observer.dart';
 import 'CacheHelper.dart/cache_helper.dart';
 import 'components.dart';
 import 'constants.dart';
 import 'dioHelper/dio_network.dart';
 import 'notification/firebaseMessagingBackground.dart';
+import 'screen/HomeLayout/cubit/home_cubit.dart';
+import 'screen/HomeLayout/cubit/home_state.dart';
+import 'screen/HomeLayout/home_layout.dart';
+import 'screen/LoginScreen/login_screen.dart';
 import 'styles/themes.dart';
 
 void main() async {
